@@ -226,3 +226,15 @@ class _TodoBodyState extends State<TodoBody> {
     )));
   }
 }
+//adding a save button logic in comment section
+// RaisedButton(
+//               onPressed: (){
+//                 setState(() {
+//                   result=addedString.text;
+//                   addToList(result);
+//                   Navigator.of(context).pop();
+//                   addedString.clear();
+//                 });
+//               },
+//             child:Text("Save"))
+
