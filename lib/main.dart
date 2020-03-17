@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -14,6 +15,74 @@ class FlutterTodo extends StatelessWidget {
     );
   }
 }
+
+// class TodoBody extends StatefulWidget {
+//   @override
+//   _TodoBodyState createState() => _TodoBodyState();
+// }
+
+// class _TodoBodyState extends State<TodoBody> {
+//   List<String> todoList=[];
+//   int index;
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text("practice_leo_Todo"),
+//       ),
+//       floatingActionButton: Column(
+//         mainAxisAlignment:MainAxisAlignment.end,
+//         children: <Widget>
+//         [
+//           Padding(
+//             padding: const EdgeInsets.only(bottom:8.0),
+//             child: FloatingActionButton(onPressed: (){
+//               try{
+//               print(index);
+//               removeFromList(index);
+//               }catch(Exception )
+//               {
+//                 print("Sorry invalid list index");
+//               }
+              
+//               },child:Icon(Icons.remove)),
+//           ),
+//           FloatingActionButton(onPressed: addToList,child:Icon(Icons.add)),
+          
+//         ]
+//       ),
+
+//       body: ListView.builder(
+//         // itemCount: 2,
+//         itemBuilder: (context, index){
+         
+//           if(index<todoList.length){
+//            this.index=index;
+//           return ListTile(
+//             title: Text(todoList[index]),
+//             onTap: (){
+//               removeFromList(index);
+//             },
+//           );
+//           }
+//         }),
+//     );
+    
+//   }
+//   void addToList()
+//   {
+//     setState(() {
+//       int index=todoList.length;
+//       todoList.add(" value no  => "+ index.toString());
+//     });
+//   }
+//   void removeFromList(int index)
+//   {
+//     setState(() {
+//       todoList.removeAt(index);
+//     });
+//   }
+// }
 
 class TodoBody extends StatefulWidget {
   @override
@@ -33,12 +102,36 @@ class _TodoBodyState extends State<TodoBody> {
         ),
         body: buildTodoBody(),
         floatingActionButton:
-            Row(mainAxisAlignment: MainAxisAlignment.end, children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(right:8.0),
-            child: FloatingActionButton(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+               children: <Widget>[
+             Padding(
+              padding: const EdgeInsets.only(right:8.0),
+              child: FloatingActionButton(
+                heroTag: "removeItem",
               onPressed: (){
-                removeTodoList(index);
+                try{
+                print(index);
+                removeFromList(index);
+                }catch(Exception)
+                {
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context){
+                      return AlertDialog(
+                        title: Align(
+                          alignment:Alignment.topCenter,
+                          child:Text("SORRY"),
+                        ),
+                        content: Text("  No more items to remove"),
+                        actions: <Widget>[
+                          FlatButton(
+                            onPressed: (){Navigator.pop(context);},
+                             child: Text("Ok"))
+                        ],
+                      );
+                    });
+                }
               },
               child: Icon(Icons.remove),
               tooltip: "Remove item",
@@ -46,7 +139,8 @@ class _TodoBodyState extends State<TodoBody> {
           ),
           
           FloatingActionButton(
-            onPressed: addTodoList,
+            heroTag: "additem",
+            onPressed: addNewScreen,
             child: Icon(Icons.add),
             tooltip: "add item",
           ),
@@ -68,21 +162,67 @@ class _TodoBodyState extends State<TodoBody> {
     return ListTile(
       title: Text(title),
       onTap: (){
-        removeTodoList(index);
+     showDialog(context: context,
+     builder: (BuildContext context)
+     {
+       return AlertDialog(title:Text("Status"),
+       content: Text("If u complete this task plz click mark"
+       "as done option or cancel it"),
+       actions: <Widget>[
+         FlatButton(
+           onPressed: (){
+             removeFromList(index);
+             Navigator.pop(context);
+           }, 
+         child: Text("Mark as done"),),
+         FlatButton(onPressed: (){
+           Navigator.pop(context);
+         }, child: Text("Cancel"))
+       ],
+       );
+       
+     });
       },
     );
   }
 
-  void addTodoList() {
+  void addToList(String newTask) {
     setState(() {
       int index = todoList.length;
-      todoList.add("uzairleoTodo" + index.toString());
+      todoList.add(newTask + index.toString());
     });
+    
   }
-  void removeTodoList(int index)
+  void removeFromList(int index)
   {
     setState((){
       todoList.removeAt(index);
     });
+  }
+  void addNewScreen()
+  {
+     Navigator.push(context,MaterialPageRoute(builder: (context)=>Scaffold(
+      appBar: AppBar(
+        title: Text("add note"),
+      ),
+      body: Center(
+        child: Column(
+          children:<Widget>[
+            TextField(
+              onSubmitted: (value){
+                setState(() {
+                  addToList(value);
+                  Navigator.of(context).pop();
+                });
+              },
+              decoration:InputDecoration(
+                hintText:"Enter your task here",
+
+              ),
+            )
+          ]
+        ),
+      ),
+    )));
   }
 }
